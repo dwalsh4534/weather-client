@@ -1,66 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './WeatherCard.css';
 
 
 function WeatherCard() {
-  const [submitted, setSubmitted] = useState(false);
-  const [fetchedData, setFetchedData] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [responseData, setResponseData] = useState(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      const data = await axios.get(
-        "http://localhost:3001/current_weather?latitude=30&longitude=70"      //Could directly hit the weather API, but hitting the app's backend instead just for demonstration
-      );
-      setFetchedData(data);
-    };
-    getData();
-  }, []);
+  const handleChange = (event) => {
+    // Access the value of the input field
+    const newValue = event.target.value;
+    setInputValue(newValue); // Update the state with the new value
+};
 
-  console.log(fetchedData);
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-  if (!fetchedData || fetchedData.length === 0) {
-    return <div>Loading...</div>; // or any placeholder
+    try {
+        const response = await axios.post('http://localhost:3001/current_weather', {
+            latitude: inputValue,
+            longitude: "100"
+        }, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        });
+        setResponseData(response.data);
+    } catch (error) {
+        console.error('Error during Axios request:', error);
+        alert('Error: Unable to fetch weather data.'); // Optional: show an alert to the user
+    }
 }
 
-  console.log("data 1: ", fetchedData);
-
-  const newData = fetchedData.data;
-
-  console.log("newData 1: ", newData.data);
-
-
-  const {latitude, longitude, ...current_weather} = newData;
-
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
-
   return (
-  <div class="card">
-    <div class="card-content">
-      <h3 class="card-title">React Weather App</h3>
-      {!submitted && (<><p class="card-description">This is a description of the card. It provides some information about the content displayed.</p>
-      <form action="/current_weather" method="GET" onSubmit={handleSubmit}>
+  <div className="card">
+    <div className="card-content">
+      <h3 className="card-title">React Weather App</h3>
+      <p className="card-description">This is a description of the card. It provides some information about the content displayed.</p>
+      <form action="/current_weather" method="POST" onSubmit={handleSubmit}>
       <div>
         <label>latitude:</label>
-        <input type="text" name="latitude"></input>
-      </div>
-      <div>
-        <label>longitude:</label>
-        <input type="text" name="longitude"></input>
+        <input type="text" name="latitude" value={inputValue} onChange={handleChange}></input>
       </div>
       <button type="submit">Submit</button>
-      </form></>)}
+      </form>
 
-      {submitted && (    <div>
+      {responseData && (<div>
       <h1>test</h1>
       <ul>
-      <li>Your latitude: {latitude}</li>
-      <li>Your longitude: {longitude}</li>
+      <li>Your temperature: {responseData.current_weather.temperature} </li>
+      <li>Your windspeed: </li>
       </ul>
     </div>)}
 
