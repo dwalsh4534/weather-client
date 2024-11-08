@@ -7,31 +7,26 @@
     font-family: Arial, sans-serif;
   }
 
-  /* Card image */
   .card img {
     width: 100%;
     height: auto;
   }
 
-  /* Card content */
   .card-content {
     padding: 16px;
   }
 
-  /* Card title */
   .card-title {
     font-size: 1.25em;
     margin-bottom: 8px;
     font-weight: bold;
   }
 
-  /* Card description */
   .card-description {
     font-size: 1em;
     color: #555;
   }
 
-  /* Card button */
   .card-button {
     display: inline-block;
     margin-top: 12px;
